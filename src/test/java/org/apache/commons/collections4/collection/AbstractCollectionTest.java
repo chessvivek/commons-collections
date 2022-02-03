@@ -36,15 +36,13 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import org.apache.commons.collections.HashBag;
 import org.apache.commons.collections4.AbstractObjectTest;
-import org.apache.commons.collections4.Bag;
 
 /**
  * Abstract test class for {@link java.util.Collection} methods and contracts.
  * <p>
  * You should create a concrete subclass of this class to test any custom
- * {@link Collection} implementation. At minimum, you'll have to
+ * {@link Collection} implementation.  At minimum, you'll have to
  * implement the @{@link #makeObject()}, {@link #makeConfirmedCollection()}
  * and {@link #makeConfirmedFullCollection()} methods.
  * You might want to override some of the additional public methods as well:
@@ -72,30 +70,29 @@ import org.apache.commons.collections4.Bag;
  * <b>Fixture Methods</b>
  * <p>
  * Fixtures are used to verify that the operation results in correct state
- * for the collection. Basically, the operation is performed against your
+ * for the collection.  Basically, the operation is performed against your
  * collection implementation, and an identical operation is performed against a
- * <i>confirmed</i> collection implementation. A confirmed collection
+ * <i>confirmed</i> collection implementation.  A confirmed collection
  * implementation is something like {@code java.util.ArrayList}, which is
- * known to conform exactly to its collection interface's contract. After the
+ * known to conform exactly to its collection interface's contract.  After the
  * operation takes place on both your collection implementation and the
  * confirmed collection implementation, the two collections are compared to see
- * if their state is identical. The comparison is usually much more involved
- * than a simple {@code equals} test. This verification is used to ensure
+ * if their state is identical.  The comparison is usually much more involved
+ * than a simple {@code equals} test.  This verification is used to ensure
  * proper modifications are made along with ensuring that the collection does
  * not change when read-only modifications are made.
  * <p>
  * The {@link #collection} field holds an instance of your collection
  * implementation; the {@link #confirmed} field holds an instance of the
- * confirmed collection implementation. The {@link #resetEmpty()} and
+ * confirmed collection implementation.  The {@link #resetEmpty()} and
  * {@link #resetFull()} methods set these fields to empty or full collections,
  * so that tests can proceed from a known state.
  * <p>
  * After a modification operation to both {@link #collection} and
  * {@link #confirmed}, the {@link #verify()} method is invoked to compare
- * the results. You may want to override {@link #verify()} to perform
- * additional verifications. For instance, when testing the collection
- * views of a map, {@link org.apache.commons.collections4.map.AbstractMapTest
- * AbstractTestMap}
+ * the results.  You may want to override {@link #verify()} to perform
+ * additional verifications.  For instance, when testing the collection
+ * views of a map, {@link org.apache.commons.collections4.map.AbstractMapTest AbstractTestMap}
  * would override {@link #verify()} to make
  * sure the map is changed after the collection view is changed.
  * <p>
@@ -109,21 +106,17 @@ import org.apache.commons.collections4.Bag;
  * Those methods should provide a confirmed collection implementation
  * that's compatible with your collection implementation.
  * <p>
- * If you're extending
- * {@link org.apache.commons.collections4.list.AbstractListTest
- * AbstractListTest},
+ * If you're extending {@link org.apache.commons.collections4.list.AbstractListTest AbstractListTest},
  * {@link org.apache.commons.collections4.set.AbstractSetTest AbstractTestSet},
- * or {@link org.apache.commons.collections4.bag.AbstractBagTest
- * AbstractBagTest},
+ * or {@link org.apache.commons.collections4.bag.AbstractBagTest AbstractBagTest},
  * you probably don't have to worry about the
  * above methods, because those three classes already override the methods
- * to provide standard JDK confirmed collections.
- * <P>
+ * to provide standard JDK confirmed collections.<P>
  * <p>
  * <b>Other notes</b>
  * <p>
  * If your {@link Collection} fails one of these tests by design,
- * you may still use this base set of cases. Simply override the
+ * you may still use this base set of cases.  Simply override the
  * test case (method) your {@link Collection} fails.
  *
  */
@@ -133,9 +126,9 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     // NOTE:
     //
     // Collection doesn't define any semantics for equals, and recommends you
-    // use reference-based default behavior of Object.equals. (And a test for
-    // that already exists in AbstractTestObject). Tests for equality of lists, sets
-    // and bags will have to be written in test subclasses. Thus, there is no
+    // use reference-based default behavior of Object.equals.  (And a test for
+    // that already exists in AbstractTestObject).  Tests for equality of lists, sets
+    // and bags will have to be written in test subclasses.  Thus, there is no
     // tests on Collection.equals nor any for Collection.hashCode.
     //
 
@@ -143,78 +136,75 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     // method that tests a modification.
 
     /**
-     * A collection instance that will be used for testing.
+     *  A collection instance that will be used for testing.
      */
     private Collection<E> collection;
 
     /**
-     * Confirmed collection. This is an instance of a collection that is
-     * confirmed to conform exactly to the java.util.Collection contract.
-     * Modification operations are tested by performing a mod on your
-     * collection, performing the exact same mod on an equivalent confirmed
-     * collection, and then calling verify() to make sure your collection
-     * still matches the confirmed collection.
+     *  Confirmed collection.  This is an instance of a collection that is
+     *  confirmed to conform exactly to the java.util.Collection contract.
+     *  Modification operations are tested by performing a mod on your
+     *  collection, performing the exact same mod on an equivalent confirmed
+     *  collection, and then calling verify() to make sure your collection
+     *  still matches the confirmed collection.
      */
     private Collection<E> confirmed;
 
     /**
      * JUnit constructor.
      *
-     * @param testName the test class name
+     * @param testName  the test class name
      */
     public AbstractCollectionTest(final String testName) {
         super(testName);
     }
 
     /**
-     * Specifies whether equal elements in the collection are, in fact,
-     * distinguishable with information not readily available. That is, if a
-     * particular value is to be removed from the collection, then there is
-     * one and only one value that can be removed, even if there are other
-     * elements which are equal to it.
+     *  Specifies whether equal elements in the collection are, in fact,
+     *  distinguishable with information not readily available.  That is, if a
+     *  particular value is to be removed from the collection, then there is
+     *  one and only one value that can be removed, even if there are other
+     *  elements which are equal to it.
      *
-     * <P>
-     * In most collection cases, elements are not distinguishable (equal is
-     * equal), thus this method defaults to return false. In some cases,
-     * however, they are. For example, the collection returned from the map's
-     * values() collection view are backed by the map, so while there may be
-     * two values that are equal, their associated keys are not. Since the
-     * keys are distinguishable, the values are.
+     *  <P>In most collection cases, elements are not distinguishable (equal is
+     *  equal), thus this method defaults to return false.  In some cases,
+     *  however, they are.  For example, the collection returned from the map's
+     *  values() collection view are backed by the map, so while there may be
+     *  two values that are equal, their associated keys are not.  Since the
+     *  keys are distinguishable, the values are.
      *
-     * <P>
-     * This flag is used to skip some verifications for iterator.remove()
-     * where it is impossible to perform an equivalent modification on the
-     * confirmed collection because it is not possible to determine which
-     * value in the confirmed collection to actually remove. Tests that
-     * override the default (i.e. where equal elements are distinguishable),
-     * should provide additional tests on iterator.remove() to make sure the
-     * proper elements are removed when remove() is called on the iterator.
+     *  <P>This flag is used to skip some verifications for iterator.remove()
+     *  where it is impossible to perform an equivalent modification on the
+     *  confirmed collection because it is not possible to determine which
+     *  value in the confirmed collection to actually remove.  Tests that
+     *  override the default (i.e. where equal elements are distinguishable),
+     *  should provide additional tests on iterator.remove() to make sure the
+     *  proper elements are removed when remove() is called on the iterator.
      **/
     public boolean areEqualElementsDistinguishable() {
         return false;
     }
 
     /**
-     * Returns true if the collections produced by
-     * {@link #makeObject()} and {@link #makeFullCollection()}
-     * support the {@code add} and {@code addAll}
-     * operations.
-     * <P>
-     * Default implementation returns true. Override if your collection
-     * class does not support add or addAll.
+     *  Returns true if the collections produced by
+     *  {@link #makeObject()} and {@link #makeFullCollection()}
+     *  support the {@code add} and {@code addAll}
+     *  operations.<P>
+     *  Default implementation returns true.  Override if your collection
+     *  class does not support add or addAll.
      */
     public boolean isAddSupported() {
         return true;
     }
 
     /**
-     * Returns true if the collections produced by
-     * {@link #makeObject()} and {@link #makeFullCollection()}
-     * support the {@code remove}, {@code removeAll},
-     * {@code retainAll}, {@code clear} and
-     * {@code iterator().remove()} methods.
-     * Default implementation returns true. Override if your collection
-     * class does not support removal operations.
+     *  Returns true if the collections produced by
+     *  {@link #makeObject()} and {@link #makeFullCollection()}
+     *  support the {@code remove}, {@code removeAll},
+     *  {@code retainAll}, {@code clear} and
+     *  {@code iterator().remove()} methods.
+     *  Default implementation returns true.  Override if your collection
+     *  class does not support removal operations.
      */
     public boolean isRemoveSupported() {
         return true;
@@ -246,8 +236,8 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Verifies that {@link #collection} and {@link #confirmed} have
-     * identical state.
+     *  Verifies that {@link #collection} and {@link #confirmed} have
+     *  identical state.
      */
     public void verify() {
         final int confirmedSize = getConfirmed().size();
@@ -257,10 +247,10 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
                 getConfirmed().isEmpty(), getCollection().isEmpty());
 
         // verify the collections are the same by attempting to match each
-        // object in the collection and confirmed collection. To account for
+        // object in the collection and confirmed collection.  To account for
         // duplicates and differing orders, each confirmed element is copied
         // into an array and a flag is maintained for each element to determine
-        // whether it has been matched once and only once. If all elements in
+        // whether it has been matched once and only once.  If all elements in
         // the confirmed collection are matched once and only once and there
         // aren't any elements left to be matched in the collection,
         // verification is a success.
@@ -317,9 +307,9 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Resets the {@link #collection} and {@link #confirmed} fields to empty
-     * collections. Invoke this method before performing a modification
-     * test.
+     *  Resets the {@link #collection} and {@link #confirmed} fields to empty
+     *  collections.  Invoke this method before performing a modification
+     *  test.
      */
     public void resetEmpty() {
         this.setCollection(makeObject());
@@ -327,9 +317,9 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Resets the {@link #collection} and {@link #confirmed} fields to full
-     * collections. Invoke this method before performing a modification
-     * test.
+     *  Resets the {@link #collection} and {@link #confirmed} fields to full
+     *  collections.  Invoke this method before performing a modification
+     *  test.
      */
     public void resetFull() {
         this.setCollection(makeFullCollection());
@@ -337,21 +327,21 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Returns a confirmed empty collection.
-     * For instance, an {@link java.util.ArrayList} for lists or a
-     * {@link java.util.HashSet} for sets.
+     *  Returns a confirmed empty collection.
+     *  For instance, an {@link java.util.ArrayList} for lists or a
+     *  {@link java.util.HashSet} for sets.
      *
-     * @return a confirmed empty collection
+     *  @return a confirmed empty collection
      */
     public abstract Collection<E> makeConfirmedCollection();
 
     /**
-     * Returns a confirmed full collection.
-     * For instance, an {@link java.util.ArrayList} for lists or a
-     * {@link java.util.HashSet} for sets. The returned collection
-     * should contain the elements returned by {@link #getFullElements()}.
+     *  Returns a confirmed full collection.
+     *  For instance, an {@link java.util.ArrayList} for lists or a
+     *  {@link java.util.HashSet} for sets.  The returned collection
+     *  should contain the elements returned by {@link #getFullElements()}.
      *
-     * @return a confirmed full collection
+     *  @return a confirmed full collection
      */
     public abstract Collection<E> makeConfirmedFullCollection();
 
@@ -362,12 +352,12 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     public abstract Collection<E> makeObject();
 
     /**
-     * Returns a full collection to be used for testing. The collection
-     * returned by this method should contain every element returned by
-     * {@link #getFullElements()}. The default implementation, in fact,
-     * simply invokes {@code addAll} on an empty collection with
-     * the results of {@link #getFullElements()}. Override this default
-     * if your collection doesn't support addAll.
+     *  Returns a full collection to be used for testing.  The collection
+     *  returned by this method should contain every element returned by
+     *  {@link #getFullElements()}.  The default implementation, in fact,
+     *  simply invokes {@code addAll} on an empty collection with
+     *  the results of {@link #getFullElements()}.  Override this default
+     *  if your collection doesn't support addAll.
      */
     public Collection<E> makeFullCollection() {
         final Collection<E> c = makeObject();
@@ -385,15 +375,14 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Returns an array of objects that are contained in a collection
-     * produced by {@link #makeFullCollection()}. Every element in the
-     * returned array <I>must</I> be an element in a full collection.
-     * <P>
-     * The default implementation returns a heterogenous array of
-     * objects with some duplicates. null is added if allowed.
-     * Override if you require specific testing elements. Note that if you
-     * override {@link #makeFullCollection()}, you <I>must</I> override
-     * this method to reflect the contents of a full collection.
+     *  Returns an array of objects that are contained in a collection
+     *  produced by {@link #makeFullCollection()}.  Every element in the
+     *  returned array <I>must</I> be an element in a full collection.<P>
+     *  The default implementation returns a heterogenous array of
+     *  objects with some duplicates. null is added if allowed.
+     *  Override if you require specific testing elements.  Note that if you
+     *  override {@link #makeFullCollection()}, you <I>must</I> override
+     *  this method to reflect the contents of a full collection.
      */
     @SuppressWarnings("unchecked")
     public E[] getFullElements() {
@@ -406,99 +395,99 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Returns an array of elements that are <I>not</I> contained in a
-     * full collection. Every element in the returned array must
-     * not exist in a collection returned by {@link #makeFullCollection()}.
-     * The default implementation returns a heterogenous array of elements
-     * without null. Note that some of the tests add these elements
-     * to an empty or full collection, so if your collection restricts
-     * certain kinds of elements, you should override this method.
+     *  Returns an array of elements that are <I>not</I> contained in a
+     *  full collection.  Every element in the returned array must
+     *  not exist in a collection returned by {@link #makeFullCollection()}.
+     *  The default implementation returns a heterogenous array of elements
+     *  without null.  Note that some of the tests add these elements
+     *  to an empty or full collection, so if your collection restricts
+     *  certain kinds of elements, you should override this method.
      */
     public E[] getOtherElements() {
         return getOtherNonNullElements();
     }
 
     /**
-     * Returns a list of elements suitable for return by
-     * {@link #getFullElements()}. The array returned by this method
-     * does not include null, but does include a variety of objects
-     * of different types. Override getFullElements to return
-     * the results of this method if your collection does not support
-     * the null element.
+     *  Returns a list of elements suitable for return by
+     *  {@link #getFullElements()}.  The array returned by this method
+     *  does not include null, but does include a variety of objects
+     *  of different types.  Override getFullElements to return
+     *  the results of this method if your collection does not support
+     *  the null element.
      */
     @SuppressWarnings("unchecked")
     public E[] getFullNonNullElements() {
         return (E[]) new Object[] {
-                "",
-                "One",
-                Integer.valueOf(2),
-                "Three",
-                Integer.valueOf(4),
-                "One",
-                Double.valueOf(5),
-                Float.valueOf(6),
-                "Seven",
-                "Eight",
-                "Nine",
-                Integer.valueOf(10),
-                Short.valueOf((short) 11),
-                Long.valueOf(12),
-                "Thirteen",
-                "14",
-                "15",
-                Byte.valueOf((byte) 16)
+            "",
+            "One",
+            Integer.valueOf(2),
+            "Three",
+            Integer.valueOf(4),
+            "One",
+            Double.valueOf(5),
+            Float.valueOf(6),
+            "Seven",
+            "Eight",
+            "Nine",
+            Integer.valueOf(10),
+            Short.valueOf((short) 11),
+            Long.valueOf(12),
+            "Thirteen",
+            "14",
+            "15",
+            Byte.valueOf((byte) 16)
         };
     }
 
     /**
-     * Returns the default list of objects returned by
-     * {@link #getOtherElements()}. Includes many objects
-     * of different types.
+     *  Returns the default list of objects returned by
+     *  {@link #getOtherElements()}.  Includes many objects
+     *  of different types.
      */
     @SuppressWarnings("unchecked")
     public E[] getOtherNonNullElements() {
         return (E[]) new Object[] {
-                Integer.valueOf(0),
-                Float.valueOf(0),
-                Double.valueOf(0),
-                "Zero",
-                Short.valueOf((short) 0),
-                Byte.valueOf((byte) 0),
-                Long.valueOf(0),
-                Character.valueOf('\u0000'),
-                "0"
+            Integer.valueOf(0),
+            Float.valueOf(0),
+            Double.valueOf(0),
+            "Zero",
+            Short.valueOf((short) 0),
+            Byte.valueOf((byte) 0),
+            Long.valueOf(0),
+            Character.valueOf('\u0000'),
+            "0"
         };
     }
 
     /**
-     * Returns a list of string elements suitable for return by
-     * {@link #getFullElements()}. Override getFullElements to return
-     * the results of this method if your collection does not support
-     * heterogenous elements or the null element.
+     *  Returns a list of string elements suitable for return by
+     *  {@link #getFullElements()}.  Override getFullElements to return
+     *  the results of this method if your collection does not support
+     *  heterogenous elements or the null element.
      */
     public Object[] getFullNonNullStringElements() {
         return new Object[] {
-                "If", "the", "dull", "substance", "of", "my", "flesh", "were",
-                "thought", "Injurious", "distance", "could", "not", "stop", "my", "way",
+            "If", "the", "dull", "substance", "of", "my", "flesh", "were",
+            "thought", "Injurious", "distance", "could", "not", "stop", "my", "way",
         };
     }
 
     /**
-     * Returns a list of string elements suitable for return by
-     * {@link #getOtherElements()}. Override getOtherElements to return
-     * the results of this method if your collection does not support
-     * heterogenous elements or the null element.
+     *  Returns a list of string elements suitable for return by
+     *  {@link #getOtherElements()}.  Override getOtherElements to return
+     *  the results of this method if your collection does not support
+     *  heterogenous elements or the null element.
      */
     public Object[] getOtherNonNullStringElements() {
         return new Object[] {
-                "For", "then", "despite", /* of */"space", "I", "would", "be",
-                "brought", "From", "limits", "far", "remote", "where", "thou", "dost", "stay"
+            "For", "then", "despite", /* of */"space", "I", "would", "be",
+            "brought", "From", "limits", "far", "remote", "where", "thou", "dost", "stay"
         };
     }
 
     // Tests
     /**
-     * Tests {@link Collection#add(Object)}.
+     *  Tests {@link Collection#add(Object)}.
      */
     public void testCollectionAdd() {
         if (!isAddSupported()) {
@@ -530,7 +519,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Tests {@link Collection#addAll(Collection)}.
+     *  Tests {@link Collection#addAll(Collection)}.
      */
     public void testCollectionAddAll() {
         if (!isAddSupported()) {
@@ -573,8 +562,8 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * If {@link #isAddSupported()} returns false, tests that add operations
-     * raise <code>UnsupportedOperationException.
+     *  If {@link #isAddSupported()} returns false, tests that add operations
+     *  raise <code>UnsupportedOperationException.
      */
     public void testUnsupportedAdd() {
         if (isAddSupported()) {
@@ -625,7 +614,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Test {@link Collection#clear()}.
+     *  Test {@link Collection#clear()}.
      */
     public void testCollectionClear() {
         if (!isRemoveSupported()) {
@@ -643,7 +632,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Tests {@link Collection#contains(Object)}.
+     *  Tests {@link Collection#contains(Object)}.
      */
     public void testCollectionContains() {
         Object[] elements;
@@ -680,7 +669,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Tests {@link Collection#containsAll(Collection)}.
+     *  Tests {@link Collection#containsAll(Collection)}.
      */
     public void testCollectionContainsAll() {
         resetEmpty();
@@ -704,8 +693,8 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         verify();
 
         final int min = getFullElements().length < 4 ? 0 : 2;
-        final int max = getFullElements().length == 1 ? 1
-                : getFullElements().length <= 5 ? getFullElements().length - 1 : 5;
+        final int max = getFullElements().length == 1 ? 1 :
+                getFullElements().length <= 5 ? getFullElements().length - 1 : 5;
         col = Arrays.asList(getFullElements()).subList(min, max);
         assertTrue("Full collection should containAll partial full elements",
                 getCollection().containsAll(col));
@@ -723,7 +712,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Tests {@link Collection#isEmpty()}.
+     *  Tests {@link Collection#isEmpty()}.
      */
     public void testCollectionIsEmpty() {
         resetEmpty();
@@ -738,7 +727,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Tests the read-only functionality of {@link Collection#iterator()}.
+     *  Tests the read-only functionality of {@link Collection#iterator()}.
      */
     public void testCollectionIterator() {
         resetEmpty();
@@ -781,7 +770,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Tests removals from {@link Collection#iterator()}.
+     *  Tests removals from {@link Collection#iterator()}.
      */
     @SuppressWarnings("unchecked")
     public void testCollectionIteratorRemove() {
@@ -822,7 +811,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
 
             // if the elements aren't distinguishable, we can just remove a
             // matching element from the confirmed collection and verify
-            // contents are still the same. Otherwise, we don't have the
+            // contents are still the same.  Otherwise, we don't have the
             // ability to distinguish the elements and determine which to
             // remove from the confirmed collection (in which case, we don't
             // verify because we don't know how).
@@ -852,7 +841,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Tests {@link Collection#remove(Object)}.
+     *  Tests {@link Collection#remove(Object)}.
      */
     public void testCollectionRemove() {
         if (!isRemoveSupported()) {
@@ -882,7 +871,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
 
             // if the elements aren't distinguishable, we can just remove a
             // matching element from the confirmed collection and verify
-            // contents are still the same. Otherwise, we don't have the
+            // contents are still the same.  Otherwise, we don't have the
             // ability to distinguish the elements and determine which to
             // remove from the confirmed collection (in which case, we don't
             // verify because we don't know how).
@@ -898,7 +887,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Tests {@link Collection#removeAll(Collection)}.
+     *  Tests {@link Collection#removeAll(Collection)}.
      */
     public void testCollectionRemoveAll() {
         if (!isRemoveSupported()) {
@@ -906,21 +895,17 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         }
 
         resetEmpty();
-        assertFalse("Empty collection removeAll should return false for empty input",
-                getCollection().removeAll(Collections.EMPTY_SET));
+        assertFalse("Empty collection removeAll should return false for empty input", getCollection().removeAll(Collections.EMPTY_SET));
         verify();
 
-        assertFalse("Empty collection removeAll should return false for nonempty input",
-                getCollection().removeAll(new ArrayList<>(getCollection())));
+        assertFalse("Empty collection removeAll should return false for nonempty input", getCollection().removeAll(new ArrayList<>(getCollection())));
         verify();
 
         resetFull();
-        assertFalse("Full collection removeAll should return false for empty input",
-                getCollection().removeAll(Collections.EMPTY_SET));
+        assertFalse("Full collection removeAll should return false for empty input", getCollection().removeAll(Collections.EMPTY_SET));
         verify();
 
-        assertFalse("Full collection removeAll should return false for other elements",
-                getCollection().removeAll(Arrays.asList(getOtherElements())));
+        assertFalse("Full collection removeAll should return false for other elements", getCollection().removeAll(Arrays.asList(getOtherElements())));
         verify();
 
         assertTrue("Full collection removeAll should return true for full elements",
@@ -931,8 +916,8 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         resetFull();
         final int size = getCollection().size();
         final int min = getFullElements().length < 4 ? 0 : 2;
-        final int max = getFullElements().length == 1 ? 1
-                : getFullElements().length <= 5 ? getFullElements().length - 1 : 5;
+        final int max = getFullElements().length == 1 ? 1 :
+                getFullElements().length <= 5 ? getFullElements().length - 1 : 5;
         final Collection<E> all = Arrays.asList(getFullElements()).subList(min, max);
         assertTrue("Full collection removeAll should work", getCollection().removeAll(all));
         getConfirmed().removeAll(all);
@@ -945,8 +930,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Tests {@link Collection#removeIf(Predicate)}.
-     * 
+     *  Tests {@link Collection#removeIf(Predicate)}.
      * @since 4.4
      */
     public void testCollectionRemoveIf() {
@@ -955,17 +939,14 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         }
 
         resetEmpty();
-        assertFalse("Empty collection removeIf should return false for a predicate that returns only false",
-                getCollection().removeIf(e -> false));
+        assertFalse("Empty collection removeIf should return false for a predicate that returns only false", getCollection().removeIf(e -> false));
         verify();
 
-        assertFalse("Empty collection removeIf should return false for a predicate that returns only true",
-                getCollection().removeIf(e -> true));
+        assertFalse("Empty collection removeIf should return false for a predicate that returns only true", getCollection().removeIf(e -> true));
         verify();
 
         resetFull();
-        assertFalse("Full collection removeIf should return false for a predicate that returns only false",
-                getCollection().removeIf(e -> false));
+        assertFalse("Full collection removeIf should return false for a predicate that returns only false", getCollection().removeIf(e -> false));
         verify();
 
         assertTrue("Full collection removeIf should return true for a predicate that returns only true",
@@ -993,7 +974,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Tests {@link Collection#retainAll(Collection)}.
+     *  Tests {@link Collection#retainAll(Collection)}.
      */
     public void testCollectionRetainAll() {
         if (!isRemoveSupported()) {
@@ -1049,11 +1030,11 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
                 "duplicate elements", getCollection().retainAll(set));
         verify();
         assertEquals("Collection size didn't change from nonduplicate " +
-                "retainAll", size, getCollection().size());
+                     "retainAll", size, getCollection().size());
     }
 
     /**
-     * Tests {@link Collection#size()}.
+     *  Tests {@link Collection#size()}.
      */
     public void testCollectionSize() {
         resetEmpty();
@@ -1064,12 +1045,12 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Tests {@link Collection#toArray()}.
+     *  Tests {@link Collection#toArray()}.
      */
     public void testCollectionToArray() {
         resetEmpty();
         assertEquals("Empty Collection should return empty array for toArray",
-                0, getCollection().toArray().length);
+                     0, getCollection().toArray().length);
 
         resetFull();
         final Object[] array = getCollection().toArray();
@@ -1108,7 +1089,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Tests {@link Collection#toArray(Object[])}.
+     *  Tests {@link Collection#toArray(Object[])}.
      */
     public void testCollectionToArray2() {
         resetEmpty();
@@ -1138,13 +1119,8 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
 
         array = getCollection().toArray(new Object[0]);
         a = getCollection().toArray();
-
-        List<Object> arrayList = Arrays.asList(array);
-        List<Object> aList = Arrays.asList(a);
-
-        assertTrue("toArrays should be equal",
-                arrayList.containsAll(aList)
-                        && arrayList.size() == aList.size());
+        assertEquals("toArrays should be equal",
+                     Arrays.asList(array), Arrays.asList(a));
 
         // Figure out if they're all the same class
         // TODO: It'd be nicer to detect a common superclass
@@ -1157,25 +1133,21 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         }
 
         Class<?> cl = classes.iterator().next();
-        if (Map.Entry.class.isAssignableFrom(cl)) { // check needed for protective cases like Predicated/Unmod map
-                                                    // entrySet
+        if (Map.Entry.class.isAssignableFrom(cl)) {  // check needed for protective cases like Predicated/Unmod map entrySet
             cl = Map.Entry.class;
         }
         a = (Object[]) Array.newInstance(cl, 0);
         array = getCollection().toArray(a);
         assertEquals("toArray(Object[]) should return correct array type",
                 a.getClass(), array.getClass());
-
-        arrayList = Arrays.asList(array);
-        aList = Arrays.asList(getCollection().toArray());
-        assertTrue("type-specific toArrays should be equal",
-                arrayList.containsAll(aList)
-                        && arrayList.size() == aList.size());
+        assertEquals("type-specific toArrays should be equal",
+                Arrays.asList(array),
+                Arrays.asList(getCollection().toArray()));
         verify();
     }
 
     /**
-     * Tests {@code toString} on a collection.
+     *  Tests {@code toString} on a collection.
      */
     public void testCollectionToString() {
         resetEmpty();
@@ -1186,8 +1158,8 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * If isRemoveSupported() returns false, tests to see that remove
-     * operations raise an UnsupportedOperationException.
+     *  If isRemoveSupported() returns false, tests to see that remove
+     *  operations raise an UnsupportedOperationException.
      */
     public void testUnsupportedRemove() {
         if (isRemoveSupported()) {
@@ -1249,7 +1221,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Tests that the collection's iterator is fail-fast.
+     *  Tests that the collection's iterator is fail-fast.
      */
     public void testCollectionIteratorFailFast() {
         if (!isFailFastSupported()) {
@@ -1379,7 +1351,6 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
 
     /**
      * Set the collection.
-     * 
      * @param collection the Collection<E> to set
      */
     public void setCollection(final Collection<E> collection) {
@@ -1392,7 +1363,6 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
 
     /**
      * Set the confirmed.
-     * 
      * @param confirmed the Collection<E> to set
      */
     public void setConfirmed(final Collection<E> confirmed) {
@@ -1400,9 +1370,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
     }
 
     /**
-     * Handle the optional exceptions declared by
-     * {@link Collection#contains(Object)}
-     * 
+     * Handle the optional exceptions declared by {@link Collection#contains(Object)}
      * @param coll
      * @param element
      */
@@ -1410,14 +1378,12 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         try {
             assertFalse(coll.contains(element));
         } catch (final ClassCastException | NullPointerException e) {
-            // apparently not
+            //apparently not
         }
     }
 
     /**
-     * Handle the optional exceptions declared by
-     * {@link Collection#containsAll(Collection)}
-     * 
+     * Handle the optional exceptions declared by {@link Collection#containsAll(Collection)}
      * @param coll
      * @param sub
      */
@@ -1425,13 +1391,12 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         try {
             assertFalse(coll.containsAll(sub));
         } catch (final ClassCastException | NullPointerException e) {
-            // apparently not
+            //apparently not
         }
     }
 
     /**
      * Handle optional exceptions of {@link Collection#remove(Object)}
-     * 
      * @param coll
      * @param element
      */
@@ -1439,13 +1404,12 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         try {
             assertFalse(coll.remove(element));
         } catch (final ClassCastException | NullPointerException e) {
-            // apparently not
+            //apparently not
         }
     }
 
     /**
      * Handle optional exceptions of {@link Collection#removeAll(Collection)}
-     * 
      * @param coll
      * @param sub
      */
@@ -1453,7 +1417,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         try {
             assertFalse(coll.removeAll(sub));
         } catch (final ClassCastException | NullPointerException e) {
-            // apparently not
+            //apparently not
         }
     }
 }
