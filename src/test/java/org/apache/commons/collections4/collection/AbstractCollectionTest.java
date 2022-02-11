@@ -38,6 +38,9 @@ import java.util.function.Predicate;
 
 import org.apache.commons.collections4.AbstractObjectTest;
 
+import org.apache.commons.collections4.Bag;
+import org.apache.commons.collections4.bag.HashBag;
+
 /**
  * Abstract test class for {@link java.util.Collection} methods and contracts.
  * <p>
@@ -1121,9 +1124,12 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         a = getCollection().toArray();
         List<Object> arrayList = Arrays.asList(array);
         List<Object> aList = Arrays.asList(a);
-        assertTrue("toArrays should be equal",
-                arrayList.containsAll(aList)
-                        && arrayList.size() == aList.size());
+
+        Bag<Object> arrayBag = new HashBag<>(arrayList);
+        Bag<Object> aBag = new HashBag<>(aList);
+
+        assertEquals("toArrays should be equal",
+                     arrayBag, aBag);
 
         // Figure out if they're all the same class
         // TODO: It'd be nicer to detect a common superclass
@@ -1145,9 +1151,13 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
                 a.getClass(), array.getClass());
         arrayList = Arrays.asList(array);
         aList = Arrays.asList(getCollection().toArray());
-        assertTrue("type-specific toArrays should be equal",
-                    arrayList.containsAll(aList)
-                    && arrayList.size() == aList.size());
+
+        arrayBag = new HashBag<>(arrayList);
+        aBag = new HashBag<>(aList);
+
+        assertEquals("type-specific toArrays should be equal",
+                arrayBag, aBag);
+
         verify();
     }
 
