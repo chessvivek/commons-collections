@@ -37,8 +37,6 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.apache.commons.collections4.AbstractObjectTest;
-
-import org.apache.commons.collections4.Bag;
 import org.apache.commons.collections4.bag.HashBag;
 
 /**
@@ -1145,7 +1143,6 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
                 a.getClass(), array.getClass());
         assertEquals("type-specific toArrays should be equal",
                 new HashBag<Object>(Arrays.asList(array)), new HashBag<>(Arrays.asList(getCollection().toArray())));
-
         verify();
     }
 
