@@ -1142,7 +1142,8 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         assertEquals("toArray(Object[]) should return correct array type",
                 a.getClass(), array.getClass());
         assertEquals("type-specific toArrays should be equal",
-                new HashBag<Object>(Arrays.asList(array)), new HashBag<>(Arrays.asList(getCollection().toArray())));
+                new HashBag<Object>(Arrays.asList(array)), 
+                new HashBag<>(Arrays.asList(getCollection().toArray())));
         verify();
     }
 
