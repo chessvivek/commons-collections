@@ -1121,7 +1121,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         array = getCollection().toArray(new Object[0]);
         a = getCollection().toArray();
         assertEquals("toArrays should be equal",
-                     new HashBag<Object>(Arrays.asList(array)), new HashBag<>(Arrays.asList(a)));
+                     new HashBag<>(Arrays.asList(array)), new HashBag<>(Arrays.asList(a)));
 
         // Figure out if they're all the same class
         // TODO: It'd be nicer to detect a common superclass
@@ -1142,7 +1142,7 @@ public abstract class AbstractCollectionTest<E> extends AbstractObjectTest {
         assertEquals("toArray(Object[]) should return correct array type",
                 a.getClass(), array.getClass());
         assertEquals("type-specific toArrays should be equal",
-                new HashBag<Object>(Arrays.asList(array)),
+                new HashBag<>(Arrays.asList(array)),
                 new HashBag<>(Arrays.asList(getCollection().toArray())));
         verify();
     }
